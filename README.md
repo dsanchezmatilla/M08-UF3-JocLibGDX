@@ -1,35 +1,63 @@
-# JocEnric
+# M08 UF3 – Minijoc amb libGDX
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+**Alumne:** David Sánchez Matilla
+**Professor:** Enric Mieza – Institut Esteve Terradas i Illa
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+Minijoc 2D fet amb [libGDX](https://libgdx.com/) per a Android i escriptori, seguint l'**opció 1** de l'enunciat: un personatge que es mou per la pantalla i canvia de pantalla quan arriba al límit.
 
-## Platforms
+## El joc
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
-- `android`: Android mobile platform. Needs Android SDK.
+- **8 pantalles (sales)** connectades en una quadrícula de 4x2. Quan el personatge surt per l'obertura d'una paret, passa a la sala del costat i apareix pel costat contrari.
+- **3 claus** a les sales 3, 5 i 7. S'agafen en tocar-les.
+- **Porta final** a la sala 8: només s'obre amb les 3 claus. Si en falten, surt l'avís "Necessites 3 claus". En obrir-la, apareix la pantalla final amb el temps de la partida.
+- **Personatge animat en 8 direccions** amb un spritesheet de 8x8 frames.
 
-## Gradle
+```
+[1] - [2] - [3] - [4]
+ |           |     |
+[5] - [6] - [7] - [8]   (porta)
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+Claus: sales 3, 5 i 7
+```
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `android:lint`: performs Android project validation.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+## Controls
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+| Plataforma | Control |
+| --- | --- |
+| Ordinador | Fletxes o WASD. ENTER o clic per passar el menú i la pantalla final. |
+| Mòbil | Tocar el terç esquerre, dret, superior o inferior de la pantalla. Les cantonades mouen en diagonal. |
+
+## Estructura del codi
+
+Tot el codi del joc és al mòdul `core` (`core/src/main/java/cat/esteveterradas/joc/`):
+
+| Classe | Funció |
+| --- | --- |
+| `Main` | `Game` principal. Guarda el `SpriteBatch`, la `BitmapFont` i el `FitViewport(8, 5)` compartits. |
+| `MainMenuScreen` | Pantalla d'inici amb les instruccions. |
+| `GameScreen` | Partida: `input()` → `logic()` → `draw()`, canvi de sala, claus, porta i HUD. |
+| `GameOverScreen` | Pantalla de victòria amb el temps. |
+| `Jugador` | Retalla l'spritesheet amb `TextureRegion`, crea una `Animation` per direcció i gestiona el moviment amb col·lisions. |
+| `Sala` | Parets i obstacles (`Rectangle`), clau i porta. |
+
+### Conceptes dels apunts aplicats
+
+- Estructura `Game` + `Screen`, com al tutorial *Drop* ampliat.
+- `FitViewport` de 8x5 unitats i `resize()` a cada pantalla.
+- Animació amb `Animation<TextureRegion>` a partir d'un spritesheet.
+- Col·lisions amb `Rectangle.overlaps`.
+- Objectes dibuixats amb `Pixmap`: terra, parets, claus i porta.
+- Joystick virtual: pantalla dividida en terços, amb `viewport.unproject` i `Rectangle.contains`, fins a 10 dits.
+
+## Com executar-lo
+
+1. Obrir la carpeta del projecte amb **Android Studio** i esperar que acabi el *Gradle Sync*.
+2. **Escriptori:** executar `Lwjgl3Launcher` (mòdul `lwjgl3`) o, des de la terminal, `gradlew lwjgl3:run`.
+3. **Android:** triar la configuració `android`, connectar un mòbil amb la depuració USB activada (o un emulador) i prémer ▶.
+
+Provat a Windows (escriptori) i en un Xiaomi Redmi Note 11.
+
+## Recursos
+
+- Projecte generat amb [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+- Spritesheet del personatge: `assets/personaje.png`, aprovat pel professor abans de començar.
